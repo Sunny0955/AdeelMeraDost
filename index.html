@@ -1,0 +1,579 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday 🎂</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #000;
+            overflow: hidden;
+            font-family: monospace;
+            color: white;
+        }
+
+        /* Password Screen */
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            z-index: 10;
+        }
+
+        .center h1 {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        .center p {
+            font-size: 17px;
+            color: #ccc;
+        }
+
+        input {
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            text-align: center;
+            width: 220px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #ffcc00;
+            color: #111;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #ffd633;
+        }
+
+        /* Main Content */
+        #mainContent {
+            display: none;
+            width: 100%;
+            height: 100vh;
+        }
+
+        /* Slideshow */
+        #slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: #111;
+        }
+
+        #slideshow img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 2s;
+            filter: brightness(35%);
+        }
+
+        /* Letter */
+        #text {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 850px;
+            height: 90vh;
+            margin: auto;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: pre-wrap;
+            font-size: 20px;
+            line-height: 1.7;
+            text-align: center;
+            overflow-y: auto;
+            text-shadow: 2px 2px 5px black;
+        }
+
+        /* Birthday Balloons */
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            font-size: 35px;
+            animation: balloonFloat 7s linear infinite;
+            z-index: 3;
+        }
+
+        @keyframes balloonFloat {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-120vh);
+                opacity: 0;
+            }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 15px;
+            top: -20px;
+            animation: fall 5s linear infinite;
+            z-index: 4;
+        }
+
+        @keyframes fall {
+            from {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Birthday Title */
+        .birthday-title {
+            position: fixed;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 5;
+            font-size: 30px;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px black;
+        }
+
+        @media (max-width: 600px) {
+            .center h1 {
+                font-size: 28px;
+            }
+
+            #text {
+                font-size: 16px;
+                line-height: 1.6;
+                padding: 60px 15px 30px;
+            }
+
+            .birthday-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PASSWORD SCREEN -->
+    <div class="center" id="lockScreen">
+
+        <h1>🎁 A Little Surprise 🎁</h1>
+
+        <p>
+            Someone has prepared something for you...
+            <br>
+            But first, prove that you're the birthday person 😎
+        </p>
+
+        <input type="password" id="password" placeholder="Enter password">
+
+        <br>
+
+        <button onclick="unlock()">
+            Unlock Surprise 🎂
+        </button>
+
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+    <div id="mainContent">
+
+        <div class="birthday-title">
+            🎉 HAPPY BIRTHDAY! 🎉
+        </div>
+
+        <div id="slideshow"></div>
+
+        <div id="text"></div>
+
+    </div>
+
+
+    <!-- MUSIC -->
+    <audio id="music" loop>
+        <source src="your-music.mp3" type="audio/mpeg">
+    </audio>
+
+
+    <script>
+
+        /*
+        ==========================================
+        PASSWORD
+        ==========================================
+        Change this to whatever password you want.
+        */
+
+        let correctPassword = "25092026";
+
+
+        /*
+        ==========================================
+        UNLOCK
+        ==========================================
+        */
+
+        function unlock() {
+
+            let input = document.getElementById("password").value;
+
+            if (input === correctPassword) {
+
+                document.getElementById("lockScreen").style.display = "none";
+
+                document.getElementById("mainContent").style.display = "block";
+
+                startEverything();
+
+            } else {
+
+                alert("Nice try 😂 Wrong password!");
+
+            }
+        }
+
+
+        /*
+        ==========================================
+        START EVERYTHING
+        ==========================================
+        */
+
+        function startEverything() {
+
+            playMusic();
+
+            typeWriter();
+
+            createBalloons();
+
+            createConfetti();
+
+            startSlideshow();
+
+        }
+
+
+        /*
+        ==========================================
+        MUSIC
+        ==========================================
+        */
+
+        function playMusic() {
+
+            let music = document.getElementById("music");
+
+            music.play().catch(() => {
+
+                document.body.addEventListener("click", () => {
+
+                    music.play();
+
+                }, { once: true });
+
+            });
+
+        }
+
+
+        /*
+        ==========================================
+        BIRTHDAY MESSAGE
+        ==========================================
+        */
+
+        let letter = `Dear Friend 🎂,
+
+Today is your special day, so obviously I had to do something a little different.
+
+Instead of simply saying:
+
+"Happy Birthday bro! 🎉"
+
+I decided to waste some time and make an entire website for you. 😂
+
+I hope you realize how rare it is for someone to get a personalized website just for their birthday.
+
+So yes...
+
+YOU ARE SPECIAL.
+
+But don't get too excited. 😎
+
+
+Anyway, jokes aside...
+
+I genuinely wish you a very Happy Birthday! ❤️
+
+May Allah bless you with happiness,
+success, good health and countless beautiful moments.
+
+May Allah make every coming year better than the previous one.
+
+May you achieve the things you are working for,
+meet the people who genuinely care about you,
+and always have reasons to smile.
+
+And most importantly...
+
+May you always have enough money
+to pay for the food when we go out. 😂😂
+
+
+Thank you for being a great friend.
+
+We've had our share of stupid conversations,
+random jokes,
+memes,
+arguments,
+and moments that probably shouldn't be mentioned here. 😂
+
+But that's what makes friendship memorable.
+
+So today...
+
+Forget everything else.
+
+Enjoy your day.
+
+Eat something good.
+
+Take lots of pictures.
+
+Ignore your responsibilities for a while.
+
+And enjoy being older. 😂
+
+
+Once again...
+
+🎂 HAPPY BIRTHDAY! 🎂
+
+May this year bring you:
+
+✨ Happiness
+✨ Success
+✨ Peace
+✨ Good health
+✨ Money
+✨ Adventure
+✨ And lots of unforgettable memories
+
+Stay blessed, stay happy,
+and keep being the same crazy person you are.
+
+Happy Birthday, my friend! 🥳❤️
+
+
+— Your Friend,
+Sunny 😎`;
+
+
+        /*
+        ==========================================
+        TYPEWRITER
+        ==========================================
+        */
+
+        let i = 0;
+
+        function typeWriter() {
+
+            if (i < letter.length) {
+
+                document.getElementById("text").innerHTML +=
+                    letter.charAt(i);
+
+                i++;
+
+                setTimeout(typeWriter, 35);
+
+            }
+
+        }
+
+
+        /*
+        ==========================================
+        SLIDESHOW
+        ==========================================
+        */
+
+        let images = [
+            "images/photo1.jpg",
+            "images/photo2.jpg",
+            "images/photo3.jpg",
+            "images/photo4.jpg"
+        ];
+
+        let currentImage = 0;
+
+
+        function startSlideshow() {
+
+            let slideshow =
+                document.getElementById("slideshow");
+
+
+            images.forEach((src, index) => {
+
+                let img = document.createElement("img");
+
+                img.src = src;
+
+                if (index === 0) {
+                    img.style.opacity = "1";
+                }
+
+                slideshow.appendChild(img);
+
+            });
+
+
+            let allImages =
+                slideshow.querySelectorAll("img");
+
+
+            setInterval(() => {
+
+                allImages[currentImage].style.opacity = "0";
+
+                currentImage =
+                    (currentImage + 1) % allImages.length;
+
+                allImages[currentImage].style.opacity = "1";
+
+            }, 5000);
+
+        }
+
+
+        /*
+        ==========================================
+        BALLOONS
+        ==========================================
+        */
+
+        function createBalloons() {
+
+            setInterval(() => {
+
+                let balloon =
+                    document.createElement("div");
+
+                balloon.classList.add("balloon");
+
+                let balloons = [
+                    "🎈",
+                    "🎈",
+                    "🎈",
+                    "🎁",
+                    "🎂"
+                ];
+
+                balloon.innerHTML =
+                    balloons[Math.floor(Math.random() * balloons.length)];
+
+                balloon.style.left =
+                    Math.random() * 100 + "vw";
+
+                balloon.style.fontSize =
+                    (25 + Math.random() * 30) + "px";
+
+                balloon.style.animationDuration =
+                    (5 + Math.random() * 4) + "s";
+
+                document.body.appendChild(balloon);
+
+                setTimeout(() => {
+
+                    balloon.remove();
+
+                }, 9000);
+
+            }, 600);
+
+        }
+
+
+        /*
+        ==========================================
+        CONFETTI
+        ==========================================
+        */
+
+        function createConfetti() {
+
+            setInterval(() => {
+
+                let confetti =
+                    document.createElement("div");
+
+                confetti.classList.add("confetti");
+
+                confetti.style.left =
+                    Math.random() * 100 + "vw";
+
+                confetti.style.animationDuration =
+                    (3 + Math.random() * 4) + "s";
+
+                confetti.style.transform =
+                    "rotate(" + Math.random() * 360 + "deg)";
+
+                document.body.appendChild(confetti);
+
+                setTimeout(() => {
+
+                    confetti.remove();
+
+                }, 7000);
+
+            }, 150);
+
+        }
+
+    </script>
+
+</body>
+
+</html>
+```
